@@ -1,11 +1,11 @@
 // ProductRepository.ts
 import Product  from '../models/Product'
-import { API_PRODUCTS_URL } from '../models/Constants';
+import { API_PRODUCT_LIST_URL } from '../models/Constants';
 
 class ProductRepository {
     async fetchProducts(): Promise<Product[]> {
       try {
-        const response = await fetch(API_PRODUCTS_URL);
+        const response = await fetch(API_PRODUCT_LIST_URL);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
