@@ -3,8 +3,12 @@ import ProductService from '../../services/ProductService'
 
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
-
+import Stack from '@mui/material/Stack'
 import Button from '@mui/material/Button'
+import InputAdornment from '@mui/material/InputAdornment'
+import Tooltip from '@mui/material/Tooltip'
+import InfoIcon from '@mui/icons-material/Info';
+
 import './AdditionalInfoForm.css'
 
 function AdditionalInfoForm() {
@@ -47,82 +51,98 @@ const [productsInfo, setProductsInfo] = useState<string>('')
       action=''
       method='POST'
       onSubmit={ evt => handleSubmit(evt) } >
-      <h1>Aditional Information</h1>
-      <p>Improve  your customer support by supplementing Wizybot's knowledge with specific product info, policies and unique details.</p>
-      <h3>Add product tags</h3>
-      <Autocomplete
-        multiple
-        id="product-select-for-tags"
-        options={products}
-        onChange={(event, newValue: string[]) => { setProductSelectedForTags(newValue) }}
-        getOptionLabel={(option) => option}
-        filterSelectedOptions
-        renderInput={(params) => (
-          <TextField 
-            {...params} 
-            label="Products" 
-            placeholder="Select products..."/>
-        )}
-        renderOption={(props, option, state) => {
-          const key = `listItem-${state.index}`
-          return (<li {...props} key={key}> {option} </li>)
-        }}
-      />
+      <Stack spacing={2} className='formStackContainer'>
+        <h2>Aditional Information</h2>
+        <p>Improve  your customer support by supplementing Wizybot's knowledge with specific product info, policies and unique details.</p>
+        <h3>Add product tags</h3>
+        <Autocomplete
+          multiple
+          id="product-select-for-tags"
+          options={products}
+          onChange={(event, newValue: string[]) => { setProductSelectedForTags(newValue) }}
+          getOptionLabel={(option) => option}
+          filterSelectedOptions
+          renderInput={(params) => (
+            <TextField 
+              {...params} 
+              label="Products" 
+              placeholder="Select products..."/>
+          )}
+          renderOption={(props, option, state) => {
+            const key = `listItem-${state.index}`
+            return (<li {...props} key={key}> {option} </li>)
+          }}
+        />
 
-      <Autocomplete
-        multiple
-        id="product-tags"
-        freeSolo
-        options={[]}
-        onChange={(event, newValue: string[]) => { setTags(newValue)}}
-        renderInput={(params) => <TextField {...params} label="Tags" />}
-      />
+        <Autocomplete
+          multiple
+          id="product-tags"
+          freeSolo
+          options={[]}
+          onChange={(event, newValue: string[]) => { setTags(newValue)}}
+          renderInput={(params) => <TextField {...params} label="Tags" />}
+        />
 
-      <h3>Add topic info</h3>
-      <TextField 
-        id="topic" 
-        label="Topic" 
-        variant="outlined" 
-        onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setTopic(event.target.value)}}
-      />
-      <TextField
-          id="topic-info"
-          label="Topic Info"
-          multiline
-          minRows={3}
-          maxRows={7}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setTopicInfo(event.target.value)}}
-      />  
+        <h3>Add topic info</h3>
+        <TextField 
+          id="topic" 
+          label="Topic" 
+          variant="outlined" 
+          fullWidth={true}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setTopic(event.target.value)}}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="start">
+                <Tooltip title="Store policies like shipping, refunds, etc.">
+                  <InfoIcon />
+                </Tooltip>
+              </InputAdornment>
+            )
+          }}
+        />
+        <TextField
+            id="topic-info"
+            label="Topic Info"
+            multiline
+            minRows={3}
+            maxRows={7}
+            fullWidth={true}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setTopicInfo(event.target.value)}}
+        />  
 
-      <h3>Add products info</h3>
-      <Autocomplete
-        multiple
-        id="product-select-for-info"
-        options={products}
-        onChange={(event, newValue: string[]) => {setProductSelectedForInfo(newValue)}}
-        getOptionLabel={(option) => option}
-        filterSelectedOptions
-        renderInput={(params) => (
-          <TextField {...params} label="Products" placeholder="Select products..." />
-        )}
-        renderOption={(props, option, state) => {
-          const key = `listItem-${state.index}`
-          return (
-            <li {...props} key={key}>
-              {option}
-            </li>
-          )
-        }}
-      />
-      <TextField
-          id="products-info"
-          label="Products Info"
-          multiline
-          minRows={3}
-          maxRows={7}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setProductsInfo(event.target.value)}}
-      /> 
-      <Button variant="contained" type='submit' >Save</Button>
+        <h3>Add products info</h3>
+        <Autocomplete
+          multiple
+          id="product-select-for-info"
+          options={products}
+          onChange={(event, newValue: string[]) => {setProductSelectedForInfo(newValue)}}
+          getOptionLabel={(option) => option}
+          filterSelectedOptions
+          renderInput={(params) => (
+            <TextField {...params} label="Products" placeholder="Select products..." />
+          )}
+          renderOption={(props, option, state) => {
+            const key = `listItem-${state.index}`
+            return (
+              <li {...props} key={key}>
+                {option}
+              </li>
+            )
+          }}
+        />
+        <TextField
+            id="products-info"
+            label="Products Info"
+            multiline
+            minRows={3}
+            maxRows={7}
+            fullWidth={true}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setProductsInfo(event.target.value)}}
+        /> 
+      </Stack>
+      
+      <Button variant="contained" type='submit' className='SubmitButton' size='large'> Send </Button>
+        
     </form >
   )
 }

@@ -1,0 +1,16 @@
+.formStackContainer{
+    margin-bottom: 16px;
+}
+
+.SubmitButton{
+    float: right;
+    background-color: #6750A4!important;
+    text-transform: capitalize!important;
+    width: 150px;
+}
+
+@media (max-width: 1024px) {
+    .SubmitButton{
+        width: 100%;
+    }
+}
