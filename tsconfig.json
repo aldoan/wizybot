@@ -23,16 +23,10 @@
   "include": ["src"],
   "baseUrl": ".",
   "paths": {
-      // "controllers/*": [ "./src/controllers/*" ],
-      // "helpers/*": [ "./src/helpers/*" ],
-      "utils/*": [ "./src/utils/*" ],
       "components/*": [ "./src/components/*" ],
       "repositories/*": [ "./src/repositories/*" ],
       "services/*": [ "./src/services/*" ],
-      // "middlewares/*": [ "./src/middlewares/*" ],
-      // "models/*": [ "./src/models/*" ],
-      // "routes/*": [ "./src/routes/*" ],
-      // "validations/*": [ "./src/validations/*" ]
+      "models/*": [ "./src/models/*" ],
   },
   "references": [{ "path": "./tsconfig.node.json" }]
 }
