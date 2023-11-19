@@ -4,23 +4,42 @@ import ProductService from '../../services/ProductService'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import Stack from '@mui/material/Stack'
+import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import InputAdornment from '@mui/material/InputAdornment'
-import Tooltip from '@mui/material/Tooltip'
-import InfoIcon from '@mui/icons-material/Info';
+
+import Input from '../controls/Input'
 
 import './AdditionalInfoForm.css'
 
 function AdditionalInfoForm() {
 
-const [products, setProducts] = useState<string[]>([])
-const [productSelectedForTags, setProductSelectedForTags] = useState<string[]>([])
-const [tags, setTags] = useState<string[]>([])
-const [topic, setTopic] = useState<string>('')
-const [topicInfo, setTopicInfo] = useState<string>('')
-const [productSelectedForInfo, setProductSelectedForInfo] = useState<string[]>([])
-const [productsInfo, setProductsInfo] = useState<string>('')
+  const initalFormValues = {
+    productSelectedForTags:[],
+    tags:[],
+    topic:"",
+    topicInfo:"",
+    productSelectedForInfo:[],
+    productsInfo:""
+  }
+  const initalErrors: { [key:string]: string } = {}
+  
+  const [products, setProducts] = useState<string[]>([])
+  
+  const [values, setValues] = useState(initalFormValues)
+  const [errors, setErrors] = useState(initalErrors)
 
+  const [productSelectedForTags, setProductSelectedForTags] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>([])
+  const [productSelectedForInfo, setProductSelectedForInfo] = useState<string[]>([])
+  
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => { 
+    const {name, value} = event.target
+    setValues({
+        ...values,
+        [name]:value
+    })
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,20 +53,39 @@ const [productsInfo, setProductsInfo] = useState<string>('')
     fetchData()
   }, [])
 
+
+  const validate = (fieldValues = values) => {
+    const temp = { ...errors }
+    if ('topic' in fieldValues) temp.topic = fieldValues.topic ? "" : "This field is required."
+    if ('topicInfo' in fieldValues) temp.topicInfo = fieldValues.topicInfo ? "" : "This field is required."
+    if ('productsInfo' in fieldValues) temp.productsInfo = fieldValues.productsInfo ? "" : "This field is required."
+    setErrors({...temp})
+
+    if (fieldValues == values) return Object.values(temp).every(x => x == "")
+  }
+
+  const resetForm = () => {
+      setValues(initalFormValues);
+      setErrors({})
+  }
+
   const handleSubmit =  (evt:React.FormEvent) => {
     evt.preventDefault()
-    
-    console.log("Products Selected For Tags: ", productSelectedForTags)
-    console.log("Tags: ", tags)
-    console.log("Topic: ", topic)
-    console.log("Topic Info: ", topicInfo)
-    console.log("Products Selected For Info: ", productSelectedForInfo)
-    console.log("productsInfo: ", productsInfo)
-
+    validate(values)
+    if (validate()){
+      console.log("NEW VALUES TO POST:")
+      console.log("Products Selected For Tags: ", productSelectedForTags)
+      console.log("Tags: ", tags)
+      console.log("Topic: ", values.topic)
+      console.log("Topic Info: ", values.topicInfo)
+      console.log("Products Selected For Info: ", productSelectedForInfo)
+      console.log("productsInfo: ", values.productsInfo)
+      resetForm()
+    }
   }
 
   return (
-    <form 
+    <Box component="form" 
       action=''
       method='POST'
       onSubmit={ evt => handleSubmit(evt) } >
@@ -56,27 +94,26 @@ const [productsInfo, setProductsInfo] = useState<string>('')
         <p>Improve  your customer support by supplementing Wizybot's knowledge with specific product info, policies and unique details.</p>
         <h3>Add product tags</h3>
         <Autocomplete
-          multiple
-          id="product-select-for-tags"
-          options={products}
-          onChange={(event, newValue: string[]) => { setProductSelectedForTags(newValue) }}
-          getOptionLabel={(option) => option}
-          filterSelectedOptions
-          renderInput={(params) => (
-            <TextField 
-              {...params} 
-              label="Products" 
-              placeholder="Select products..."/>
-          )}
-          renderOption={(props, option, state) => {
-            const key = `listItem-${state.index}`
-            return (<li {...props} key={key}> {option} </li>)
-          }}
+              multiple
+              id="product-select-for-tags"
+              options={products}
+              onChange={(event, newValue: string[]) => {setProductSelectedForTags(newValue)}}
+              getOptionLabel={(option) => option}
+              filterSelectedOptions
+              renderInput={(params) => (
+                <TextField 
+                  {...params} 
+                  placeholder="Select products..."/>
+              )}
+              renderOption={(props, option, state) => {
+                const key = `listItem-${state.index}`
+                return (<li {...props} key={key}> {option} </li>)
+              }}
         />
 
         <Autocomplete
           multiple
-          id="product-tags"
+          id="tags"
           freeSolo
           options={[]}
           onChange={(event, newValue: string[]) => { setTags(newValue)}}
@@ -84,31 +121,25 @@ const [productsInfo, setProductsInfo] = useState<string>('')
         />
 
         <h3>Add topic info</h3>
-        <TextField 
-          id="topic" 
-          label="Topic" 
-          variant="outlined" 
-          fullWidth={true}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setTopic(event.target.value)}}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="start">
-                <Tooltip title="Store policies like shipping, refunds, etc.">
-                  <InfoIcon />
-                </Tooltip>
-              </InputAdornment>
-            )
-          }}
+        <Input  
+          name="topic"
+          label="Topic"
+          value={values.topic}
+          error={errors.topic}
+          tooltip={true}
+          handleChange={handleInputChange}
         />
-        <TextField
-            id="topic-info"
-            label="Topic Info"
-            multiline
-            minRows={3}
-            maxRows={7}
-            fullWidth={true}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setTopicInfo(event.target.value)}}
-        />  
+
+        <Input  
+          name="topicInfo"
+          label="Topic Info"
+          value={values.topicInfo}
+          error={errors.topicInfo}
+          multiline={true}
+          minRows={3}
+          maxRows={7}
+          handleChange={handleInputChange}
+        /> 
 
         <h3>Add products info</h3>
         <Autocomplete
@@ -130,20 +161,22 @@ const [productsInfo, setProductsInfo] = useState<string>('')
             )
           }}
         />
-        <TextField
-            id="products-info"
-            label="Products Info"
-            multiline
-            minRows={3}
-            maxRows={7}
-            fullWidth={true}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {setProductsInfo(event.target.value)}}
+
+        <Input  
+          name="productsInfo"
+          label="Products Info"
+          value={values.productsInfo}
+          error={errors.productsInfo}
+          multiline={true}
+          minRows={3}
+          maxRows={7}
+          handleChange={handleInputChange}
         /> 
       </Stack>
       
       <Button variant="contained" type='submit' className='SubmitButton' size='large'> Send </Button>
         
-    </form >
+    </Box >
   )
 }
 
