@@ -13,19 +13,16 @@ import './AdditionalInfoForm.css'
 
 function AdditionalInfoForm() {
 
-  const initalFormValues = {
-    productSelectedForTags:[],
-    tags:[],
+  const initalInputValues = {
     topic:"",
     topicInfo:"",
-    productSelectedForInfo:[],
     productsInfo:""
   }
   const initalErrors: { [key:string]: string } = {}
   
   const [products, setProducts] = useState<string[]>([])
   
-  const [values, setValues] = useState(initalFormValues)
+  const [values, setValues] = useState(initalInputValues)
   const [errors, setErrors] = useState(initalErrors)
 
   const [productSelectedForTags, setProductSelectedForTags] = useState<string[]>([])
@@ -65,21 +62,23 @@ function AdditionalInfoForm() {
   }
 
   const resetForm = () => {
-      setValues(initalFormValues);
-      setErrors({})
+    setValues(initalInputValues)
+    setErrors({})
   }
 
   const handleSubmit =  (evt:React.FormEvent) => {
     evt.preventDefault()
     validate(values)
     if (validate()){
-      console.log("NEW VALUES TO POST:")
-      console.log("Products Selected For Tags: ", productSelectedForTags)
-      console.log("Tags: ", tags)
-      console.log("Topic: ", values.topic)
-      console.log("Topic Info: ", values.topicInfo)
-      console.log("Products Selected For Info: ", productSelectedForInfo)
-      console.log("productsInfo: ", values.productsInfo)
+      const res = {
+        "productSelectedForTags":productSelectedForTags,
+        "tags": tags,
+        "topic": values.topic,
+        "topicInfo": values.topicInfo,
+        productSelectedForInfo,
+        "productsInfo":values.productsInfo
+      }
+      console.log("RESULT DATA TO POST", res)
       resetForm()
     }
   }
@@ -117,7 +116,15 @@ function AdditionalInfoForm() {
           freeSolo
           options={[]}
           onChange={(event, newValue: string[]) => { setTags(newValue)}}
-          renderInput={(params) => <TextField {...params} label="Tags" />}
+          renderInput={
+            (params) => 
+              <TextField 
+                {...params} 
+                helperText="Type a tag name an hit enter"
+                label="Tags" 
+                placeholder="Tags"
+              />
+          }
         />
 
         <h3>Add topic info</h3>
@@ -150,7 +157,11 @@ function AdditionalInfoForm() {
           getOptionLabel={(option) => option}
           filterSelectedOptions
           renderInput={(params) => (
-            <TextField {...params} label="Products" placeholder="Select products..." />
+            <TextField 
+              {...params}  
+              label="Products" 
+              placeholder="Select products..." 
+            />
           )}
           renderOption={(props, option, state) => {
             const key = `listItem-${state.index}`
