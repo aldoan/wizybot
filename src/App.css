@@ -1,4 +1,9 @@
 #root {
-  padding: 2rem;
   width: 100%;
+  margin-bottom: 24px;
+}
+
+.header{
+  background-color: #161635!important;
+  justify-content: center;
 }
